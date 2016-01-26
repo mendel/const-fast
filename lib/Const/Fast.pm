@@ -6,7 +6,7 @@ use warnings FATAL => 'all';
 
 use Scalar::Util qw/reftype blessed/;
 use Carp qw/croak/;
-use Sub::Exporter::Progressive 0.001007 -setup => { exports => [qw/const/], groups => { default => [qw/const/] } };
+use Sub::Exporter::Progressive 0.001007 -setup => { exports => [qw/const make_readonly/], groups => { default => [qw/const/] } };
 
 sub _dclone($) {
 	require Storable;
@@ -64,6 +64,10 @@ sub const(\[$@%]@) {
 	return;
 }
 
+sub make_readonly(\[$@%]@) {
+    _make_readonly(\$_, 1) for @_;
+}
+
 1;    # End of Const::Fast
 
 # ABSTRACT: Facility for creating read-only scalars, arrays, and hashes
@@ -84,9 +88,19 @@ sub const(\[$@%]@) {
 
 =head2 const %var, %value...
 
-This the only function of this module and it is exported by default. It takes a scalar, array or hash lvalue as first argument, and a list of one or more values depending on the type of the first argument as the value for the variable. It will set the variable to that value and subsequently make it readonly. Arrays and hashes will be made deeply readonly.
+This the only function that is exported by default. It takes a scalar, array or hash lvalue as first argument, and a list of one or more values depending on the type of the first argument as the value for the variable. It will set the variable to that value and subsequently make it readonly. Arrays and hashes will be made deeply readonly.
 
 Exporting is done using Sub::Exporter::Progressive. You may need to depend on Sub::Exporter explicitly if you need the latter's flexibility.
+
+=head2 make_readonly SCALAR
+
+=head2 make_readonly ARRAYREF
+
+=head2 make_readonly HASHREF
+
+Makes SCALAR/ARRAYREF/HASHREF readonly. Arrays and hashes will be made deeply readonly.
+
+Not exported by default.
 
 =head1 RATIONALE
 

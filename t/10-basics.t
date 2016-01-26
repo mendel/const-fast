@@ -91,4 +91,18 @@ throws_ok { &const(1, 1) } qr/^Invalid first argument, need an reference at/, 'F
 my $a = \{}; 
 lives_ok { const($a => $a) };
 
+
+lives_ok { my $scalar = 45; Const::Fast::make_readonly($scalar); } 'Make scalar readonly';
+
+throws_readonly { my $scalar = 45; Const::Fast::make_readonly($scalar); $scalar = 45 } 'Modify scalar';
+
+lives_ok { my @array = (1, 2, 3, 4); Const::Fast::make_readonly(@array); } 'Make array readonly';
+
+throws_readonly { my @array = (1, 2, 3, 4); Const::Fast::make_readonly(@array); $array[2] = 3 } 'Modify array';
+throws_readonly { my @array = (1, 2, 3, 4); Const::Fast::make_readonly(@array); push @array, 5 } 'Append array';
+
+lives_ok { my %hash = (key1 => "value", key2 => "value2"); Const::Fast::make_readonly(%hash); } 'Create hash';
+throws_readonly { my %hash = (key1 => "value", key2 => "value2"); Const::Fast::make_readonly(%hash); $hash{key1} = "value" } 'Modify hash';
+
+
 done_testing;
